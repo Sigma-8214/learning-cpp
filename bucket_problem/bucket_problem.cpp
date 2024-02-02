@@ -85,8 +85,7 @@ std::string action_to_string(const Action action)
 
 int main()
 {
-    State s;
-    std::deque<State> queue = {s};
+    std::deque<State> queue = {State{}};
 
     while (!queue.empty())
     {
@@ -105,7 +104,7 @@ int main()
 
     std::cout << "[*] Solution: " << std::endl;
 
-    State state;
+    auto state = State{};
     for (auto action : queue.front().history)
     {
         state = state.modify(action);
