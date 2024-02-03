@@ -1,0 +1,3 @@
+build_command = "g++ -o .build/out {{file}}"
+run_command = "./.build/out"
+default_file = "main.cpp"
