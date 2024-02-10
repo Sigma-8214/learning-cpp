@@ -4,9 +4,7 @@
 
 using namespace vector;
 
-int main()
-{
-start:
+int main() {
     auto vec = Vector<3>::from({1.0, 10.0, 5.0});
     auto vec2 = Vector<3>::from({2.0, 20.0, 5.0});
 

@@ -2,14 +2,11 @@
 #include <iostream>
 #include <vector>
 
-std::vector<int> sequential_digits(const uint32_t low, const uint32_t high)
-{
+std::vector<int> sequential_digits(const uint32_t low, const uint32_t high) {
     auto out = std::vector<int>{};
-    for (uint32_t start = 1; start <= 9; start++)
-    {
+    for (uint32_t start = 1; start <= 9; start++) {
         uint32_t num = start;
-        for (uint32_t next = start + 1; next <= 9; next++)
-        {
+        for (uint32_t next = start + 1; next <= 9; next++) {
             num = num * 10 + next;
             if (num > high)
                 break;
@@ -22,8 +19,7 @@ std::vector<int> sequential_digits(const uint32_t low, const uint32_t high)
     return out;
 }
 
-int main()
-{
+int main() {
     uint32_t low;
     uint32_t high;
     std::cin >> low >> high;
