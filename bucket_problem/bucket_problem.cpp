@@ -14,36 +14,33 @@ struct State {
     uint32_t a;
     uint32_t b;
 
-    State modify(const Action action) const {
-        State state = *this;
-        state.history.push_back(action);
+    void modify(const Action action) {
+        history.push_back(action);
 
         switch (action) {
         case Action::FillA:
-            state.a = BUCKET_A;
+            a = BUCKET_A;
             break;
         case Action::FillB:
-            state.b = BUCKET_B;
+            b = BUCKET_B;
             break;
         case Action::EmptyA:
-            state.a = 0;
+            a = 0;
             break;
         case Action::EmptyB:
-            state.b = 0;
+            b = 0;
             break;
         case Action::PourA: {
-            uint32_t to_pour = std::min(state.a, BUCKET_B - state.b);
-            state.a -= to_pour;
-            state.b += to_pour;
+            uint32_t to_pour = std::min(a, BUCKET_B - b);
+            a -= to_pour;
+            b += to_pour;
         } break;
         case Action::PourB: {
-            uint32_t to_pour = std::min(state.b, BUCKET_A - state.a);
-            state.b -= to_pour;
-            state.a += to_pour;
+            uint32_t to_pour = std::min(b, BUCKET_A - a);
+            b -= to_pour;
+            a += to_pour;
         } break;
         }
-
-        return state;
     }
 };
 
@@ -67,7 +64,7 @@ std::string action_to_string(const Action action) {
 }
 
 int main() {
-    std::deque<State> queue = {State{}};
+    std::deque<State> queue = {State()};
 
     while (!queue.empty()) {
         auto state = queue.front();
@@ -77,7 +74,9 @@ int main() {
         queue.pop_front();
         for (int i = 0; i < 6; i++) {
             auto action = static_cast<Action>(i);
-            State new_state = state.modify(action);
+            auto new_state = state;
+
+            new_state.modify(action);
             queue.push_back(new_state);
         }
     }
@@ -86,7 +85,7 @@ int main() {
 
     auto state = State{};
     for (auto action : queue.front().history) {
-        state = state.modify(action);
+        state.modify(action);
         std::cout << " |  " << action_to_string(action) << "\t(" << state.a
                   << ", " << state.b << ")" << std::endl;
     }
