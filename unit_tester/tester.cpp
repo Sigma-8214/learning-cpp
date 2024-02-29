@@ -24,15 +24,14 @@ void test(std::string name, std::function<Result()> test) {
 }
 
 Result Result::pass() { return Result(true, {}); }
-Result Result::fail(std::string message) { return Result(false, message); }
-Result Result::assert(bool condition, std::string message) {
+Result Result::fail() { return Result(false, {}); }
+Result Result::assert(bool condition) {
     if (condition)
         return Result::pass();
     else
-        return Result::fail(message);
+        return Result::fail();
 }
-template <typename T>
-Result Result::assertEq(T expected, T actual, std::string message) {
-    return Result::assert(expected == actual, message);
+template <typename T> Result Result::assertEq(T expected, T actual) {
+    return Result::assert(expected == actual);
 }
 } // namespace tester

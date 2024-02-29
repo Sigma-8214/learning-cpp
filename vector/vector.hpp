@@ -91,6 +91,15 @@ template <size_t N> class Vector {
         return result;
     }
 
+    bool operator==(const Vector &other) {
+        for (size_t i = 0; i < N; i++)
+            if (data[i] != other.data[i])
+                return false;
+        return true;
+    }
+
+    bool operator!=(const Vector &other) { return !(*this == other); }
+
     /// @brief Scales a vector by a scalar. (Multiplies all components by a
     /// scalar)
     friend Vector operator*(const Num &scalar, const Vector &vec) {
