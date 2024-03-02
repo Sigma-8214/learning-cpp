@@ -3,6 +3,7 @@
 #include "../unit_tester/tester.hpp"
 
 #include "list.hpp"
+#include "stack.hpp"
 
 using namespace tester;
 
@@ -53,8 +54,40 @@ template <class List> void test_list(std::string name, List array) {
     std::cout << std::endl;
 }
 
+template <class Stack> void test_stack(std::string name, Stack stack) {
+    std::cout << "== " << name << " ==" << std::endl;
+
+    test("Init", [&stack]() { return Result::assert(stack.isEmpty()); });
+
+    stack.push(1234);
+    test("Push", [&stack]() {
+        return Result::assert(!stack.isEmpty())
+            .chain(Result::assert(stack.peek() == 1234));
+    });
+
+    stack.push(5678);
+    test("Push Again", [&stack]() {
+        return Result::assert(!stack.isEmpty())
+            .chain(Result::assert(stack.peek() == 5678));
+    });
+
+    stack.pop();
+    test("Pop", [&stack]() {
+        return Result::assert(!stack.isEmpty())
+            .chain(Result::assert(stack.peek() == 1234));
+    });
+
+    stack.pop();
+    test("Pop Again", [&stack]() { return Result::assert(stack.isEmpty()); });
+
+    std::cout << std::endl;
+}
+
 int main() {
     test_list("Array List", list::ArrayList<int>::empty());
     test_list("Linked List", list::LinkedList<int>::empty());
+
+    test_stack("Array Stack", stack::ArrayStack<int>::empty());
+    test_stack("Linked Stack", stack::LinkedStack<int>::empty());
     return 0;
 }
