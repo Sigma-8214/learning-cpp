@@ -1,5 +1,7 @@
 #pragma once
 
+// todo: figure out what the virtual methods are about...
+
 namespace list {
 template <class T> class List {
   public:
@@ -68,6 +70,28 @@ template <class T> class ArrayList : public List<T> {
     T getEntry(int position) const;
     void setEntry(int position, const T &newEntry);
 };
+
+template <class T> class LinkedList : public List<T> {
+    struct Node {
+        T data;
+        Node *next;
+    };
+
+    Node *head;
+    size_t size;
+
+  public:
+    static LinkedList empty();
+
+    bool isEmpty() const;
+    int getLength() const;
+    bool insert(int newPosition, const T &newEntry);
+    bool remove(int position);
+    void clear();
+    T getEntry(int position) const;
+    void setEntry(int position, const T &newEntry);
+};
+
 } // namespace list
 
 #include "list.cpp"
