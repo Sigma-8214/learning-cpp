@@ -24,14 +24,23 @@ void test(std::string name, std::function<Result()> test) {
 }
 
 Result Result::pass() { return Result(true, {}); }
+
 Result Result::fail() { return Result(false, {}); }
+
 Result Result::assert(bool condition) {
     if (condition)
         return Result::pass();
     else
         return Result::fail();
 }
+
 template <typename T> Result Result::assertEq(T expected, T actual) {
     return Result::assert(expected == actual);
+}
+
+Result Result::chain(const Result other) {
+    if (this->passed == false)
+        return *this;
+    return other;
 }
 } // namespace tester

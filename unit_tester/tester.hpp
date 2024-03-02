@@ -25,6 +25,8 @@ class Result {
     static Result fail();
     static Result assert(bool condition);
     template <typename T> static Result assertEq(T expected, T actual);
+
+    Result chain(const Result other);
 };
 
 void test(std::string name, std::function<Result()> test);
