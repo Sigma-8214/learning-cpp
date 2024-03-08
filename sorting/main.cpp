@@ -5,6 +5,7 @@
 #include "../unit_tester/tester.hpp"
 
 #include "merge.hpp"
+#include "radix.hpp"
 
 using namespace tester;
 
@@ -26,10 +27,14 @@ list::ArrayList<int> list_from_array(std::vector<int> arr) {
     return list;
 }
 
-void test_sorting(std::string name, list::ArrayList<int> list) {
-    test("Merge Sort: " + name, [&list]() {
-        merge::merge_sort(list);
+void test_sorting(
+    std::function<void(list::ArrayList<int>)> sort, std::string name,
+    std::vector<int> rawList
+) {
+    auto list = list_from_array(rawList);
+    sort(list);
 
+    test(name, [&list]() {
         for (auto i = 0; i < list.getLength() - 1; i++)
             if (list.getEntry(i) > list.getEntry(i + 1))
                 return Result::fail().context(
@@ -40,9 +45,25 @@ void test_sorting(std::string name, list::ArrayList<int> list) {
 }
 
 int main() {
-    test_sorting("Pre Sorted", list_from_array({1, 2, 3, 4, 5}));
-    test_sorting("Reverse Sorted", list_from_array({5, 4, 3, 2, 1}));
-    test_sorting("Random", list_from_array({3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5}));
+    auto pre_sorted = {1, 2, 3, 4, 5};
+    auto rev_sorted = {5, 4, 3, 2, 1};
+    auto random_sorted = {3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5};
+    auto big_random_sorted = {27, 14, 11, 5, 2, 9, 3, 1, 0, 8, 6, 4, 7, 10, 13};
+
+    std::cout << "== Merge Sort ==" << std::endl;
+    auto merge = [](list::ArrayList<int> list) { merge::merge_sort(list); };
+    test_sorting(merge, "Pre Sorted", pre_sorted);
+    test_sorting(merge, "Reverse Sorted", rev_sorted);
+    test_sorting(merge, "Random", random_sorted);
+    test_sorting(merge, "Big Random", big_random_sorted);
+    std::cout << std::endl;
+
+    std::cout << "== Radix Sort ==" << std::endl;
+    auto radix = [](list::ArrayList<int> list) { radix::radix_sort(list); };
+    test_sorting(radix, "Pre Sorted", pre_sorted);
+    test_sorting(radix, "Reverse Sorted", rev_sorted);
+    test_sorting(radix, "Random", random_sorted);
+    test_sorting(radix, "Big Random", big_random_sorted);
 
     return 0;
 }
