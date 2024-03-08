@@ -69,6 +69,8 @@ template <class T> class ArrayList : public List<T> {
     void clear();
     T getEntry(int position) const;
     void setEntry(int position, const T &newEntry);
+
+    void swap(int a, int b);
 };
 
 template <class T> class LinkedList : public List<T> {

@@ -14,6 +14,7 @@ class Result {
         : passed(passed), msg(msg) {}
 
     bool hasPassed() { return passed; }
+    bool hasMessage() { return msg.has_value(); }
     std::string getMessage() { return msg.value(); }
 
     Result message(std::string msg) {
@@ -26,6 +27,7 @@ class Result {
     static Result assert(bool condition);
     template <typename T> static Result assertEq(T expected, T actual);
 
+    Result context(std::string message);
     Result chain(const Result other);
 };
 

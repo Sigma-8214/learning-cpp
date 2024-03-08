@@ -19,7 +19,8 @@ void test(std::string name, std::function<Result()> test) {
         std::cout << GREEN << " (passed)" << RESET << std::endl;
     } else {
         std::cout << RED << " (failed)" << RESET << std::endl;
-        std::cout << "    " << result.getMessage() << std::endl;
+        if (result.hasMessage())
+            std::cout << "    " << result.getMessage() << std::endl;
     }
 }
 
@@ -42,5 +43,9 @@ Result Result::chain(const Result other) {
     if (this->passed == false)
         return *this;
     return other;
+}
+
+Result Result::context(std::string message) {
+    return Result(this->passed, std::optional<std::string>(message));
 }
 } // namespace tester

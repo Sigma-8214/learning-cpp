@@ -70,6 +70,15 @@ template <class T> bool ArrayList<T>::remove(int position) {
     return true;
 }
 
+template <class T> void ArrayList<T>::swap(int a, int b) {
+    if (a >= size || b >= size)
+        throw std::out_of_range("Invalid position");
+
+    auto temp = data[a];
+    data[a] = data[b];
+    data[b] = temp;
+}
+
 template <class T> LinkedList<T> LinkedList<T>::empty() {
     auto list = LinkedList();
     list.size = 0;
