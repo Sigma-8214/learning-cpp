@@ -130,8 +130,20 @@ void Gui::refresh_screen() {
 
 Gui Gui::create() {
     auto self = Gui();
+    std::cout << "\x1b[?25l";
     self.refresh_screen();
     return self;
+}
+
+void Gui::cleanup() { std::cout << "\x1b[?25h"; }
+
+Gui Gui::with_target_frame_rate(uint16_t frame_rate) {
+    this->frame_rate = frame_rate;
+    if (frame_rate == -1)
+        delta_time = 1.0f;
+    else
+        delta_time = 1.0f / frame_rate;
+    return *this;
 }
 
 void Gui::set(char character, Point2i position, Style style) {
@@ -183,12 +195,16 @@ void Gui::draw_circle(Point2i center, int32_t radius, char chr, Style style) {
 float32_t Gui::get_delta_time() { return delta_time; }
 
 void Gui::update() {
+    auto now = std::chrono::system_clock::now();
+    if (last_update.time_since_epoch().count() != 0)
+        delta_time =
+            std::chrono::duration<float32_t>(now - last_update).count();
+
     auto next_update =
         last_update + std::chrono::milliseconds(1000 / frame_rate);
-    delta_time =
-        std::chrono::duration<float32_t>(next_update - last_update).count();
-    std::this_thread::sleep_until(next_update);
-    last_update = std::chrono::system_clock::now();
+    if (frame_rate != -1)
+        std::this_thread::sleep_until(next_update);
+    last_update = now;
 
     auto out = std::string();
     Style last_style;

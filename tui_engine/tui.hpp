@@ -65,6 +65,9 @@ class Gui {
 
   public:
     static Gui create();
+    void cleanup();
+
+    Gui with_target_frame_rate(uint16_t frame_rate);
 
     void set(char character, Point2i position, Style style);
     void draw_text(Point2i position, const std::string text, Style style);

@@ -5,7 +5,7 @@
 #include "../tui_engine/tui.hpp"
 
 int main() {
-    auto gui = Gui::create();
+    auto gui = Gui::create().with_target_frame_rate(-1);
 
     auto paused = false;
 
@@ -46,5 +46,6 @@ int main() {
         gui.update();
     }
 
+    gui.cleanup();
     return 0;
 }
