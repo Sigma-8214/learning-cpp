@@ -129,7 +129,16 @@ Gui Gui::create() {
     return self;
 }
 
-void Gui::drawText(Point2i position, const std::string text, Style style) {
+void Gui::set(char character, Point2i position, Style style) {
+    auto index = to_index(position);
+    if (index < 0 || index >= width * height)
+        return;
+
+    screen[index] = character;
+    this->style[index] = style;
+}
+
+void Gui::draw_text(Point2i position, const std::string text, Style style) {
     size_t idx = 0;
     auto chr = text.begin();
 
@@ -140,10 +149,30 @@ void Gui::drawText(Point2i position, const std::string text, Style style) {
         if (x < 0 || x >= width || y < 0 || y >= height)
             continue;
 
-        auto index = to_index(Point2i::create(x, y));
-        screen[index] = *chr;
-        this->style[index] = style;
+        set(*chr, Point2i::create(x, y), style);
     }
+}
+
+// Modified From: Circle drawing algorithm in C
+// https://dev.to/sjmulder/circle-drawing-algorithm-in-c-4057
+void Gui::draw_circle(Point2i center, int32_t radius, char chr, Style style) {
+    int32_t x, y;
+
+    for (x = 0, y = radius; x < y; x++)
+        for (; y >= 0; y--) {
+            set(chr, Point2i::create(center.x + x * 2, center.y + y), style);
+            set(chr, Point2i::create(center.x + x * 2, center.y - y), style);
+            set(chr, Point2i::create(center.x - x * 2, center.y + y), style);
+            set(chr, Point2i::create(center.x - x * 2, center.y - y), style);
+
+            set(chr, Point2i::create(center.x + y * 2, center.y + x), style);
+            set(chr, Point2i::create(center.x + y * 2, center.y - x), style);
+            set(chr, Point2i::create(center.x - y * 2, center.y + x), style);
+            set(chr, Point2i::create(center.x - y * 2, center.y - x), style);
+
+            if (x * x + (y - 1) * (y - 1) < radius * radius)
+                break;
+        }
 }
 
 float32_t Gui::get_delta_time() { return delta_time; }

@@ -1,11 +1,3 @@
-// Program and animates and moves the word and fades its color, stopping on a
-// keypress
-
-#include <chrono>
-#include <cmath>
-#include <cstdint>
-#include <iostream>
-#include <thread>
 #include <windows.h>
 
 #include "../tui_engine/tui.hpp"
@@ -19,7 +11,6 @@ int main() {
     auto vel = Point2f::create(10, 5);
 
     auto hue = 0.0;
-    auto red = 0;
 
     auto text = std::string("Hello, World!");
     auto text_len = text.length();
@@ -42,13 +33,13 @@ int main() {
         if (point.y < 0 || point.y >= get_screen_size().y)
             vel.y *= -1;
 
-        gui.drawText(
+        gui.draw_text(
             point, text,
             Style::unstyled().with_fg(Color::from_hsv(hue, 1.0, 1.0))
         );
 
         if (paused)
-            gui.drawText(Point2i::create(0, 0), "Paused", Style::unstyled());
+            gui.draw_text(Point2i::create(0, 0), "Paused", Style::unstyled());
 
         gui.update();
     }

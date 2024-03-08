@@ -70,7 +70,9 @@ class Gui {
   public:
     static Gui create();
 
-    void drawText(Point2i position, const std::string text, Style style);
+    void set(char character, Point2i position, Style style);
+    void draw_text(Point2i position, const std::string text, Style style);
+    void draw_circle(Point2i center, int32_t radius, char chr, Style style);
     float32_t get_delta_time();
 
     void update();
