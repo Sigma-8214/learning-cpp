@@ -1,12 +1,6 @@
 #pragma once
 
 #include <chrono>
-#include <cmath>
-#include <cstdint>
-#include <iostream>
-#include <optional>
-#include <thread>
-#include <windows.h>
 
 using time_point = std::chrono::system_clock::time_point;
 using float32_t = float;
@@ -50,6 +44,8 @@ class Style {
 
     Style with_fg(Color fg);
     Style with_bg(Color bg);
+
+    bool eq(Style other);
 };
 
 class Gui {

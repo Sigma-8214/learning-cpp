@@ -1,3 +1,4 @@
+#include <string>
 #include <windows.h>
 
 #include "../tui_engine/tui.hpp"

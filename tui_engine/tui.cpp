@@ -96,6 +96,11 @@ Style Style::with_bg(Color bg) {
     return self;
 }
 
+bool Style::eq(Style other) {
+    return fg.r == other.fg.r && fg.g == other.fg.g && fg.b == other.fg.b &&
+           bg.r == other.bg.r && bg.g == other.bg.g && bg.b == other.bg.b;
+}
+
 size_t Gui::to_index(Point2i position) {
     return position.y * width + position.x;
 }
@@ -186,31 +191,25 @@ void Gui::update() {
     last_update = std::chrono::system_clock::now();
 
     auto out = std::string();
-    auto last_attr = 0;
+    Style last_style;
 
     for (auto y = 0; y < height; y++) {
         for (auto x = 0; x < width; x++) {
             auto index = to_index(Point2i::create(x, y));
             auto style = this->style[index];
-            auto fg = style.fg;
-            auto bg = style.bg;
 
-            auto color = RGB(fg.r, fg.g, fg.b);
-            auto background = RGB(bg.r, bg.g, bg.b);
-            auto style_attr = background << 4 | color;
-
-            if (style_attr != last_attr) {
-                last_attr = style_attr;
+            if (!style.eq(last_style)) {
+                last_style = style;
 
                 out += "\x1b[38;2;";
-                out += std::to_string(fg.r) + ";";
-                out += std::to_string(fg.g) + ";";
-                out += std::to_string(fg.b) + "m";
+                out += std::to_string(style.fg.r) + ";";
+                out += std::to_string(style.fg.g) + ";";
+                out += std::to_string(style.fg.b) + "m";
 
                 out += "\x1b[48;2;";
-                out += std::to_string(bg.r) + ";";
-                out += std::to_string(bg.g) + ";";
-                out += std::to_string(bg.b) + "m";
+                out += std::to_string(style.bg.r) + ";";
+                out += std::to_string(style.bg.g) + ";";
+                out += std::to_string(style.bg.b) + "m";
             }
 
             if (screen[index] == 0)
