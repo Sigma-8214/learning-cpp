@@ -3,6 +3,7 @@
 #include "../unit_tester/tester.hpp"
 
 #include "list.hpp"
+#include "sorted_list.hpp"
 #include "stack.hpp"
 
 using namespace tester;
@@ -83,11 +84,45 @@ template <class Stack> void test_stack(std::string name, Stack stack) {
     std::cout << std::endl;
 }
 
+void test_sorted_list() {
+    std::cout << "== Sorted List ==" << std::endl;
+
+    auto list = list::SortedLinkedList<int>::empty();
+
+    test("Init", [&list]() { return Result::assert(list.isEmpty()); });
+
+    list.insert(1234);
+
+    test("Insert", [&list]() {
+        return Result::assert(!list.isEmpty())
+            .chain(Result::assert(list.getEntry(0) == 1234));
+    });
+
+    list.insert(5678);
+
+    test("Insert Again", [&list]() {
+        return Result::assert(!list.isEmpty())
+            .chain(Result::assert(list.getEntry(0) == 1234))
+            .chain(Result::assert(list.getEntry(1) == 5678));
+    });
+
+    list.insert(4321);
+
+    test("Insert Again", [&list]() {
+        return Result::assert(!list.isEmpty())
+            .chain(Result::assert(list.getEntry(0) == 1234))
+            .chain(Result::assert(list.getEntry(1) == 4321))
+            .chain(Result::assert(list.getEntry(2) == 5678));
+    });
+}
+
 int main() {
     test_list("Array List", list::ArrayList<int>::empty());
     test_list("Linked List", list::LinkedList<int>::empty());
 
     test_stack("Array Stack", stack::ArrayStack<int>::empty());
     test_stack("Linked Stack", stack::LinkedStack<int>::empty());
+
+    test_sorted_list();
     return 0;
 }
