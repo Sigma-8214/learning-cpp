@@ -11,23 +11,17 @@ void merge_inner(
     size_t a = start;
     size_t b = middle + 1;
 
-    list::ArrayList<int> merged = list::ArrayList<int>::empty();
-
     while (a <= middle && b <= end) {
-        if (list.getEntry(a) <= list.getEntry(b))
-            merged.insert(merged.getLength(), list.getEntry(a++));
-        else
-            merged.insert(merged.getLength(), list.getEntry(b++));
+        if (list.getEntry(a) > list.getEntry(b)) {
+            int value = list.getEntry(b);
+            for (size_t i = b; i > a; i--)
+                list.setEntry(i, list.getEntry(i - 1));
+            list.setEntry(a, value);
+            middle++;
+            b++;
+        }
+        a++;
     }
-
-    while (a <= middle)
-        merged.insert(merged.getLength(), list.getEntry(a++));
-
-    while (b <= end)
-        merged.insert(merged.getLength(), list.getEntry(b++));
-
-    for (size_t i = start; i <= end; i++)
-        list.setEntry(i, merged.getEntry(i - start));
 }
 
 void merge_sort_inner(
@@ -40,10 +34,10 @@ void merge_sort_inner(
     merge_sort_inner(list, start, middle);
     merge_sort_inner(list, middle + 1, end);
 
-    return merge_inner(list, start, middle, end);
+    merge_inner(list, start, middle, end);
 }
 
 void merge_sort(list::ArrayList<int> &list) {
     merge_sort_inner(list, 0, list.getLength() - 1);
 }
-}
+} // namespace merge
