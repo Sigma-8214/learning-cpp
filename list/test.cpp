@@ -2,6 +2,7 @@
 
 #include "../unit_tester/tester.hpp"
 
+#include "fixed_queue.hpp"
 #include "list.hpp"
 #include "sorted_list.hpp"
 #include "stack.hpp"
@@ -114,6 +115,52 @@ void test_sorted_list() {
             .chain(Result::assert(list.getEntry(1) == 4321))
             .chain(Result::assert(list.getEntry(2) == 5678));
     });
+
+    std::cout << std::endl;
+}
+
+void test_queue() {
+    std::cout << "== Queue ==" << std::endl;
+
+    auto queue = fixed_queue::FixedQueue<10, uint32_t>::empty();
+
+    test("Init", [&queue]() {
+        return Result::assert(queue.isEmpty())
+            .chain(Result::assert(!queue.isFull()));
+    });
+
+    queue.enqueue(1234);
+
+    test("Enqueue", [&queue]() {
+        return Result::assert(!queue.isEmpty())
+            .chain(Result::assert(!queue.isFull()))
+            .chain(Result::assert(queue.peek() == 1234));
+    });
+
+    queue.enqueue(5678);
+
+    test("Enqueue Again", [&queue]() {
+        return Result::assert(!queue.isEmpty())
+            .chain(Result::assert(!queue.isFull()))
+            .chain(Result::assert(queue.peek() == 1234));
+    });
+
+    queue.dequeue();
+
+    test("Dequeue", [&queue]() {
+        return Result::assert(!queue.isEmpty())
+            .chain(Result::assert(!queue.isFull()))
+            .chain(Result::assert(queue.peek() == 5678));
+    });
+
+    queue.dequeue();
+
+    test("Dequeue Again", [&queue]() {
+        return Result::assert(queue.isEmpty())
+            .chain(Result::assert(!queue.isFull()));
+    });
+
+    std::cout << std::endl;
 }
 
 int main() {
@@ -124,5 +171,7 @@ int main() {
     test_stack("Linked Stack", stack::LinkedStack<int>::empty());
 
     test_sorted_list();
+    test_queue();
+
     return 0;
 }
