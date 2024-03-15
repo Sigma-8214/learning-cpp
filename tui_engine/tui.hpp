@@ -5,12 +5,19 @@
 using time_point = std::chrono::system_clock::time_point;
 using float32_t = float;
 
+class Point2f;
+
 class Point2i {
   public:
     int32_t x;
     int32_t y;
 
+    static Point2i origin();
     static Point2i create(int32_t x, int32_t y);
+
+    explicit operator Point2f();
+    Point2i operator+(Point2i other);
+    Point2i operator-(Point2i other);
 };
 
 class Point2f {
@@ -18,7 +25,12 @@ class Point2f {
     float32_t x;
     float32_t y;
 
+    static Point2f origin();
     static Point2f create(float32_t x, float32_t y);
+
+    operator Point2i();
+    Point2f operator+(Point2f other);
+    Point2f operator-(Point2f other);
 };
 
 Point2i get_screen_size();
@@ -69,10 +81,14 @@ class Gui {
 
     Gui with_target_frame_rate(uint16_t frame_rate);
 
+    float32_t get_delta_time();
+    uint16_t get_width();
+    uint16_t get_height();
+    Point2i get_size();
+
     void set(char character, Point2i position, Style style);
     void draw_text(Point2i position, const std::string text, Style style);
     void draw_circle(Point2i center, int32_t radius, char chr, Style style);
-    float32_t get_delta_time();
 
     void update();
 };

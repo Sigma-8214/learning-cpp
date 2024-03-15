@@ -10,6 +10,8 @@
 using time_point = std::chrono::system_clock::time_point;
 using float32_t = float;
 
+Point2i Point2i::origin() { return Point2i::create(0, 0); }
+
 Point2i Point2i::create(int32_t x, int32_t y) {
     auto self = Point2i();
     self.x = x;
@@ -17,11 +19,33 @@ Point2i Point2i::create(int32_t x, int32_t y) {
     return self;
 }
 
+Point2i::operator Point2f() { return Point2f::create(x, y); }
+
+Point2i Point2i::operator+(Point2i other) {
+    return Point2i::create(x + other.x, y + other.y);
+}
+
+Point2i Point2i::operator-(Point2i other) {
+    return Point2i::create(x - other.x, y - other.y);
+}
+
+Point2f Point2f::origin() { return Point2f::create(0, 0); }
+
 Point2f Point2f::create(float32_t x, float32_t y) {
     auto self = Point2f();
     self.x = x;
     self.y = y;
     return self;
+}
+
+Point2f::operator Point2i() { return Point2i::create(roundf(x), roundf(y)); }
+
+Point2f Point2f::operator+(Point2f other) {
+    return Point2f::create(x + other.x, y + other.y);
+}
+
+Point2f Point2f::operator-(Point2f other) {
+    return Point2f::create(x - other.x, y - other.y);
 }
 
 Point2i get_screen_size() {
@@ -194,6 +218,12 @@ void Gui::draw_circle(Point2i center, int32_t radius, char chr, Style style) {
 
 float32_t Gui::get_delta_time() { return delta_time; }
 
+uint16_t Gui::get_width() { return width; }
+
+uint16_t Gui::get_height() { return height; }
+
+Point2i Gui::get_size() { return Point2i::create(width, height); }
+
 void Gui::update() {
     auto now = std::chrono::system_clock::now();
     if (last_update.time_since_epoch().count() != 0)
@@ -202,6 +232,7 @@ void Gui::update() {
 
     auto next_update =
         last_update + std::chrono::milliseconds(1000 / frame_rate);
+
     if (frame_rate != -1)
         std::this_thread::sleep_until(next_update);
     last_update = now;
