@@ -3,6 +3,7 @@
 #include "../unit_tester/tester.hpp"
 
 #include "fixed_queue.hpp"
+#include "heap.hpp"
 #include "list.hpp"
 #include "sorted_list.hpp"
 #include "stack.hpp"
@@ -163,6 +164,43 @@ void test_queue() {
     std::cout << std::endl;
 }
 
+void test_heap() {
+    std::cout << "== Heap ==" << std::endl;
+
+    auto heap = heap::Heap<10, uint32_t>::empty();
+
+    test("Init", [&heap]() {
+        return Result::assert(heap.isEmpty())
+            .chain(Result::assert(!heap.isFull()));
+    });
+
+    heap.add(1234);
+
+    test("Add", [&heap]() {
+        return Result::assert(!heap.isEmpty())
+            .chain(Result::assert(!heap.isFull()))
+            .chain(Result::assert(heap.peek() == 1234));
+    });
+
+    heap.add(5678);
+
+    test("Add Again", [&heap]() {
+        return Result::assert(!heap.isEmpty())
+            .chain(Result::assert(!heap.isFull()))
+            .chain(Result::assert(heap.peek() == 5678));
+    });
+
+    heap.remove();
+
+    test("Remove", [&heap]() {
+        return Result::assert(!heap.isEmpty())
+            .chain(Result::assert(!heap.isFull()))
+            .chain(Result::assert(heap.peek() == 1234));
+    });
+
+    std::cout << std::endl;
+}
+
 int main() {
     test_list("Array List", list::ArrayList<int>::empty());
     test_list("Linked List", list::LinkedList<int>::empty());
@@ -172,6 +210,7 @@ int main() {
 
     test_sorted_list();
     test_queue();
+    test_heap();
 
     return 0;
 }

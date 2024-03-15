@@ -4,6 +4,7 @@
 #include "../list/list.hpp"
 #include "../unit_tester/tester.hpp"
 
+#include "heap.hpp"
 #include "merge.hpp"
 #include "radix.hpp"
 
@@ -64,6 +65,14 @@ int main() {
     test_sorting(radix, "Reverse Sorted", rev_sorted);
     test_sorting(radix, "Random", random_sorted);
     test_sorting(radix, "Big Random", big_random_sorted);
+    std::cout << std::endl;
+
+    std::cout << "== Heap Sort ==" << std::endl;
+    auto heap = [](list::ArrayList<int> list) { heap::heap_sort<15>(list); };
+    test_sorting(heap, "Pre Sorted", pre_sorted);
+    test_sorting(heap, "Reverse Sorted", rev_sorted);
+    test_sorting(heap, "Random", random_sorted);
+    test_sorting(heap, "Big Random", big_random_sorted);
 
     return 0;
 }
