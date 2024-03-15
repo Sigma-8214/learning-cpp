@@ -5,6 +5,7 @@
 #include "fixed_queue.hpp"
 #include "heap.hpp"
 #include "list.hpp"
+#include "priority_queue.hpp"
 #include "sorted_list.hpp"
 #include "stack.hpp"
 
@@ -164,6 +165,46 @@ void test_queue() {
     std::cout << std::endl;
 }
 
+void test_priority_queue() {
+    std::cout << "== Priority Queue ==" << std::endl;
+
+    auto queue = priority_queue::PriorityQueue<2, uint32_t>::empty();
+
+    test("Init", [&queue]() {
+        return Result::assert(queue.isEmpty())
+            .chain(Result::assert(!queue.isFull()));
+    });
+
+    queue.add(1234, 2);
+
+    test("Add", [&queue]() {
+        return Result::assert(!queue.isEmpty())
+            .chain(Result::assert(!queue.isFull()))
+            .chain(Result::assert(queue.peek() == 1234))
+            .chain(Result::assert(queue.peekPriority() == 2));
+    });
+
+    queue.add(5678, 1);
+
+    test("Add Again", [&queue]() {
+        return Result::assert(!queue.isEmpty())
+            .chain(Result::assert(queue.isFull()))
+            .chain(Result::assert(queue.peek() == 1234))
+            .chain(Result::assert(queue.peekPriority() == 2));
+    });
+
+    queue.remove();
+
+    test("Remove", [&queue]() {
+        return Result::assert(!queue.isEmpty())
+            .chain(Result::assert(!queue.isFull()))
+            .chain(Result::assert(queue.peek() == 5678))
+            .chain(Result::assert(queue.peekPriority() == 1));
+    });
+
+    std::cout << std::endl;
+}
+
 void test_heap() {
     std::cout << "== Heap ==" << std::endl;
 
@@ -210,6 +251,7 @@ int main() {
 
     test_sorted_list();
     test_queue();
+    test_priority_queue();
     test_heap();
 
     return 0;
