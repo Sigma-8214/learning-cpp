@@ -89,6 +89,9 @@ Color Color::from_hsv(
         return Color::create(t * 255, p * 255, lightness * 255);
     case 5:
         return Color::create(lightness * 255, p * 255, q * 255);
+    default:
+        // Will never happen, but complier is complaining...
+        return Color();
     }
 }
 
