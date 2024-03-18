@@ -8,7 +8,9 @@
 
 #include "../tui_engine/tui.hpp"
 
+// AM: do not use structs, use classes to have an elegant OOP design.
 struct FallingWord {
+//AM, have a constructor for the class
     std::string word;
     Point2f spawn_position;
     Point2f position;
@@ -62,6 +64,7 @@ struct WordShower {
     uint32_t typed;
 
     void spawn_word(uint16_t width) {
+        // This means the code complexity is not controlled by you.
         auto word = word_list[rand() % word_list.size()];
 
         auto offset = word.size() + 10;
@@ -85,11 +88,19 @@ struct WordShower {
             words.pop_back();
 
         for (auto i = 0; i < words.size(); i++) {
+            //AM Why do you need to get a pointer to the word and then use the pointer elemnts access?
+            // If you wanted to avoid calling the index [i] you could have get a reference to the element, right?
+            // I think you could have done this:
+            // auto& word = words[i];
+            // word.render(gui);
+            // ...
             auto word = &words[i];
             word->render(gui);
 
             auto was_typed = word->typed == word->word.size();
             if (word->position.y > gui.get_height() || was_typed) {
+                //AM: I wonder if this causes any bug or not, why index is being reduced in a loop that it is being incremented. 
+                // It is not a recommended pattern. Ideally the loop index should not get modified within the loop.
                 words.erase(words.begin() + i--);
                 typed += was_typed;
             }
@@ -98,6 +109,7 @@ struct WordShower {
 
     void typed_char(char character) {
         for (auto &word : words) {
+            // AM: This is violating encapsulation. Each class should hide its elements, one class should not be able to change the state of another class. the Word class could provide CRUD operations api
             if (word.word[word.typed] == character)
                 word.typed++;
         }
@@ -126,7 +138,7 @@ int main() {
         // == Handle input events ==
         auto events = new DWORD();
         GetNumberOfConsoleInputEvents(GetStdHandle(STD_INPUT_HANDLE), events);
-
+        // AM: Does it create a busy wait? What happens if the number of is zero? 
         auto event_buffer = new INPUT_RECORD[*events];
         ReadConsoleInput(
             GetStdHandle(STD_INPUT_HANDLE), event_buffer, *events, events
