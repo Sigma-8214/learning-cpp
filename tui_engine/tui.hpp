@@ -1,6 +1,7 @@
 #pragma once
 
 #include <chrono>
+#include <string>
 
 using time_point = std::chrono::system_clock::time_point;
 using float32_t = float;
