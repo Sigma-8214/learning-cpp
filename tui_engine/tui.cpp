@@ -99,13 +99,8 @@ Style Style::unstyled() {
     auto self = Style();
     self.fg = Color::create(255, 255, 255);
     self.bg = Color::create(0, 0, 0);
-    return self;
-}
-
-Style Style::create(Color fg, Color bg) {
-    auto self = Style();
-    self.fg = fg;
-    self.bg = bg;
+    self.underline = false;
+    self.bold = false;
     return self;
 }
 
@@ -113,6 +108,8 @@ Style Style::with_fg(Color fg) {
     auto self = Style();
     self.fg = fg;
     self.bg = bg;
+    self.underline = underline;
+    self.bold = bold;
     return self;
 }
 
@@ -120,12 +117,37 @@ Style Style::with_bg(Color bg) {
     auto self = Style();
     self.fg = fg;
     self.bg = bg;
+    self.underline = underline;
+    self.bold = bold;
     return self;
 }
 
+Style Style::with_underline(bool underline) {
+    auto self = Style();
+    self.fg = fg;
+    self.bg = bg;
+    self.underline = underline;
+    self.bold = bold;
+    return self;
+}
+
+Style Style::with_underline() { return with_underline(true); }
+
+Style Style::with_bold(bool bold) {
+    auto self = Style();
+    self.fg = fg;
+    self.bg = bg;
+    self.underline = underline;
+    self.bold = bold;
+    return self;
+}
+
+Style Style::with_bold() { return with_bold(true); }
+
 bool Style::eq(Style other) {
     return fg.r == other.fg.r && fg.g == other.fg.g && fg.b == other.fg.b &&
-           bg.r == other.bg.r && bg.g == other.bg.g && bg.b == other.bg.b;
+           bg.r == other.bg.r && bg.g == other.bg.g && bg.b == other.bg.b &&
+           underline == other.underline && bold == other.bold;
 }
 
 size_t Gui::to_index(Point2i position) {
@@ -241,6 +263,8 @@ void Gui::update() {
     last_update = now;
 
     auto out = std::string();
+    auto underline = false;
+    auto bold = false;
     Style last_style;
 
     for (auto y = 0; y < height; y++) {
@@ -260,6 +284,16 @@ void Gui::update() {
                 out += std::to_string(style.bg.r) + ";";
                 out += std::to_string(style.bg.g) + ";";
                 out += std::to_string(style.bg.b) + "m";
+
+                if (style.underline != underline) {
+                    underline = style.underline;
+                    out += underline ? "\x1b[4m" : "\x1b[24m";
+                }
+
+                if (style.bold != bold) {
+                    bold = style.bold;
+                    out += bold ? "\x1b[1m" : "\x1b[22m";
+                }
             }
 
             if (screen[index] == 0)

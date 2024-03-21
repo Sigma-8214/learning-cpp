@@ -52,11 +52,18 @@ class Style {
     Color fg;
     Color bg;
 
+    bool underline;
+    bool bold;
+
     static Style unstyled();
-    static Style create(Color fg, Color bg);
 
     Style with_fg(Color fg);
     Style with_bg(Color bg);
+
+    Style with_underline(bool underline);
+    Style with_underline();
+    Style with_bold(bool bold);
+    Style with_bold();
 
     bool eq(Style other);
 };
