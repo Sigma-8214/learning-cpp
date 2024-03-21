@@ -1,4 +1,5 @@
 *.exe
 *.gch
+*.bin
 **.build
 .vscode
