@@ -2,19 +2,20 @@
 
 #include "binary_search_tree_interface.hpp"
 
-namespace tree {
+namespace red_black_tree {
 template <class T> struct Node {
     T data;
+    bool color; // 0 for black, 1 for red
     Node *left;
     Node *right;
 };
 
 template <class ItemType>
-class BinarySearchTree : public BinaryTreeInterface<ItemType> {
+class RedBlackTree : public BinaryTreeInterface<ItemType> {
     Node<ItemType> *root = nullptr;
 
   public:
-    static BinarySearchTree<ItemType> empty();
+    static RedBlackTree<ItemType> empty();
 
     bool isEmpty() const;
     int getHeight() const;
@@ -32,6 +33,6 @@ class BinarySearchTree : public BinaryTreeInterface<ItemType> {
     void inorderTraverse(void visit(ItemType &)) const;
     void postorderTraverse(void visit(ItemType &)) const;
 };
-} // namespace tree
+} // namespace red_black_tree
 
-#include "binary_search_tree.cpp"
+#include "red_black_tree.cpp"

@@ -1,49 +1,51 @@
-#include "binary_search_tree.hpp"
+#include "red_black_tree.hpp"
 
-namespace tree {
-template <class T> BinarySearchTree<T> BinarySearchTree<T>::empty() {
-    return BinarySearchTree();
+namespace red_black_tree {
+template <class ItemType>
+RedBlackTree<ItemType> RedBlackTree<ItemType>::empty() {
+    return RedBlackTree<ItemType>();
 }
 
-template <class T> bool BinarySearchTree<T>::isEmpty() const {
+template <class ItemType> bool RedBlackTree<ItemType>::isEmpty() const {
     return root == nullptr;
 }
 
-template <class T> int BinarySearchTree<T>::getHeight() const {
+template <class ItemType> int RedBlackTree<ItemType>::getHeight() const {
     return getHeightInner(root);
 }
 
-template <class T> int getHeightInner(Node<T> *node) {
+template <class ItemType> int getHeightInner(Node<ItemType> *node) {
     if (node == nullptr)
         return 0;
     return 1 +
            std::max(getHeightInner(node->left), getHeightInner(node->right));
 }
 
-template <class T> int BinarySearchTree<T>::getNumberOfNodes() const {
+template <class ItemType> int RedBlackTree<ItemType>::getNumberOfNodes() const {
     return getNumberOfNodesInner(root);
 }
 
-template <class T> int getNumberOfNodesInner(Node<T> *node) {
+template <class ItemType> int getNumberOfNodesInner(Node<ItemType> *node) {
     if (node == nullptr)
         return 0;
     return 1 + getNumberOfNodesInner(node->left) +
            getNumberOfNodesInner(node->right);
 }
 
-template <class T> T BinarySearchTree<T>::getRootData() const {
-    if (root == nullptr)
-        throw std::invalid_argument("Root node is null.");
+template <class ItemType> ItemType RedBlackTree<ItemType>::getRootData() const {
     return root->data;
 }
 
-template <class T> bool BinarySearchTree<T>::add(const T &newData) {
+template <class ItemType>
+bool RedBlackTree<ItemType>::add(const ItemType &newData) {
     return addInner(root, newData);
 }
 
-template <class T> bool addInner(Node<T> *&node, const T &newData) {
+// todo: implement red-black tree insertion
+template <class ItemType>
+bool addInner(Node<ItemType> *&node, const ItemType &newData) {
     if (node == nullptr) {
-        node = new Node<T>{newData, nullptr, nullptr};
+        node = new Node<ItemType>{newData, false, nullptr, nullptr};
         return true;
     }
     if (newData < node->data)
@@ -53,10 +55,12 @@ template <class T> bool addInner(Node<T> *&node, const T &newData) {
     return false;
 }
 
-template <class T> bool BinarySearchTree<T>::remove(const T &data) {
+template <class ItemType>
+bool RedBlackTree<ItemType>::remove(const ItemType &data) {
     return removeInner(root, data);
 }
 
+// todo: implement red-black tree deletion
 template <class T> bool removeInner(Node<T> *&node, const T &data) {
     if (node == nullptr)
         return false;
@@ -90,39 +94,37 @@ template <class T> bool removeInner(Node<T> *&node, const T &data) {
     return removeInner(node->right, node->data);
 }
 
-template <class T> T getMin(Node<T> *node) {
-    if (node->left == nullptr)
-        return node->data;
-    return getMin(node->left);
+template <class ItemType> void RedBlackTree<ItemType>::clear() {
+    clearInner(root);
+    root = nullptr;
 }
 
-template <class T> void BinarySearchTree<T>::clear() { clearInner(root); }
-
-template <class T> void clearInner(Node<T> *&node) {
+template <class ItemType> void clearInner(Node<ItemType> *node) {
     if (node == nullptr)
         return;
     clearInner(node->left);
     clearInner(node->right);
     delete node;
-    node = nullptr;
 }
 
-template <class T> bool BinarySearchTree<T>::contains(const T &anEntry) const {
+template <class ItemType>
+bool RedBlackTree<ItemType>::contains(const ItemType &anEntry) const {
     return containsInner(root, anEntry);
 }
 
-template <class T> bool containsInner(Node<T> *node, const T &anEntry) {
+template <class ItemType>
+bool containsInner(Node<ItemType> *node, const ItemType &anEntry) {
     if (node == nullptr)
         return false;
-    if (anEntry < node->data)
-        return containsInner(node->left, anEntry);
-    if (anEntry > node->data)
+    if (node->data < anEntry)
         return containsInner(node->right, anEntry);
+    if (node->data > anEntry)
+        return containsInner(node->left, anEntry);
     return true;
 }
 
 template <class T>
-void BinarySearchTree<T>::preorderTraverse(void visit(T &)) const {
+void RedBlackTree<T>::preorderTraverse(void visit(T &)) const {
     preorderTraverseInner(root, visit);
 }
 
@@ -135,7 +137,7 @@ template <class T> void preorderTraverseInner(Node<T> *node, void visit(T &)) {
 }
 
 template <class T>
-void BinarySearchTree<T>::inorderTraverse(void visit(T &)) const {
+void RedBlackTree<T>::inorderTraverse(void visit(T &)) const {
     inorderTraverseInner(root, visit);
 }
 
@@ -148,7 +150,7 @@ template <class T> void inorderTraverseInner(Node<T> *node, void visit(T &)) {
 }
 
 template <class T>
-void BinarySearchTree<T>::postorderTraverse(void visit(T &)) const {
+void RedBlackTree<T>::postorderTraverse(void visit(T &)) const {
     postorderTraverseInner(root, visit);
 }
 
@@ -159,4 +161,4 @@ template <class T> void postorderTraverseInner(Node<T> *node, void visit(T &)) {
     postorderTraverseInner(node->right, visit);
     visit(node->data);
 }
-}
+} // namespace red_black_tree
