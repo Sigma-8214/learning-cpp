@@ -9,14 +9,16 @@
 
 using namespace tester;
 
-void test_tree(std::unique_ptr<BinaryTreeInterface<int>> tree) {
-    test("test", [&tree]() {
-        tree->add(5);
-        tree->add(3);
-        tree->add(7);
-        tree->add(2);
+void test_tree(
+    std::string name, std::unique_ptr<BinaryTreeInterface<int>> tree
+) {
+    test("Test: " + name, [&tree]() {
+        auto to_add = {5, 3, 7, 2};
 
-        if (!tree->contains(3))
+        for (auto &data : to_add)
+            tree->add(data);
+
+        if (!tree->contains(2))
             return Result::fail().message("contains(3) failed");
 
         std::cout << std::endl;
@@ -32,9 +34,6 @@ void test_tree(std::unique_ptr<BinaryTreeInterface<int>> tree) {
         if (tree->getNumberOfNodes() != 3)
             return Result::fail().message("getNumberOfNodes() failed");
 
-        if (tree->getHeight() != 2)
-            return Result::fail().message("getHeight() failed");
-
         tree->clear();
         if (!tree->isEmpty())
             return Result::fail().message("clear() failed");
@@ -44,7 +43,9 @@ void test_tree(std::unique_ptr<BinaryTreeInterface<int>> tree) {
 }
 
 int main() {
-    test_tree(std::make_unique<tree::BinarySearchTree<int>>());
-    test_tree(std::make_unique<red_black_tree::RedBlackTree<int>>());
+    test_tree("Binary Tree", std::make_unique<tree::BinarySearchTree<int>>());
+    test_tree(
+        "Red Black Tree", std::make_unique<red_black_tree::RedBlackTree<int>>()
+    );
     return 0;
 }

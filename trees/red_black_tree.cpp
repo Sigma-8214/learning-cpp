@@ -38,21 +38,99 @@ template <class ItemType> ItemType RedBlackTree<ItemType>::getRootData() const {
 
 template <class ItemType>
 bool RedBlackTree<ItemType>::add(const ItemType &newData) {
-    return addInner(root, newData);
+    return addInner(root, root, newData);
 }
 
-// todo: implement red-black tree insertion
 template <class ItemType>
-bool addInner(Node<ItemType> *&node, const ItemType &newData) {
+bool RedBlackTree<ItemType>::addInner(
+    Node<ItemType> *&parent, Node<ItemType> *&node, const ItemType &newData
+) {
     if (node == nullptr) {
-        node = new Node<ItemType>{newData, false, nullptr, nullptr};
+        node =
+            new Node<ItemType>{newData, Color::Red, parent, nullptr, nullptr};
         return true;
     }
+
+    if (newData == node->data)
+        return false;
+
     if (newData < node->data)
-        return addInner(node->left, newData);
+        addInner(node, node->left, newData);
     if (newData > node->data)
-        return addInner(node->right, newData);
-    return false;
+        addInner(node, node->right, newData);
+
+    while (node != root && node->parent->color == Color::Red) {
+        if (node->parent == node->parent->parent->left) {
+            Node<ItemType> *uncle = node->parent->parent->right;
+            if (uncle->color == Color::Red) {
+                node->parent->color = Color::Black;
+                uncle->color = Color::Black;
+                node->parent->parent->color = Color::Red;
+                node = node->parent->parent;
+            } else {
+                if (node == node->parent->right) {
+                    node = node->parent;
+                    leftRotate(root, node);
+                }
+                node->parent->color = Color::Black;
+                node->parent->parent->color = Color::Red;
+                rightRotate(root, node->parent->parent);
+            }
+        } else {
+            Node<ItemType> *uncle = node->parent->parent->left;
+            if (uncle->color == Color::Red) {
+                node->parent->color = Color::Black;
+                uncle->color = Color::Black;
+                node->parent->parent->color = Color::Red;
+                node = node->parent->parent;
+            } else {
+                if (node == node->parent->left) {
+                    node = node->parent;
+                    rightRotate(root, node);
+                }
+                node->parent->color = Color::Black;
+                node->parent->parent->color = Color::Red;
+                leftRotate(root, node->parent->parent);
+            }
+        }
+    }
+
+    root->color = Color::Black;
+    return true;
+}
+
+template <class ItemType>
+void leftRotate(Node<ItemType> *&root, Node<ItemType> *&node) {
+    Node<ItemType> *right = node->right;
+    node->right = right->left;
+    if (right->left != nullptr)
+        right->left->parent = node;
+    right->parent = node->parent;
+    if (node->parent == nullptr)
+        root = right;
+    else if (node == node->parent->left)
+        node->parent->left = right;
+    else
+        node->parent->right = right;
+    right->left = node;
+    node->parent = right;
+}
+
+template <class ItemType>
+void rightRotate(Node<ItemType> *&root, Node<ItemType> *&node) {
+    Node<ItemType> *left = node->left;
+    node->left = left->right;
+    if (left->right != nullptr)
+        left->right->parent = node;
+    left->parent = node->parent;
+    if (node->parent == nullptr)
+        root = left;
+    else if (node == node->parent->right)
+        node->parent->right = left;
+    else
+        node->parent->left = left;
+    left->right = node;
+    node->parent = left;
 }
 
 template <class ItemType>
@@ -92,6 +170,12 @@ template <class T> bool removeInner(Node<T> *&node, const T &data) {
 
     node->data = getMin(node->right);
     return removeInner(node->right, node->data);
+}
+
+template <class T> T getMin(Node<T> *node) {
+    while (node->left != nullptr)
+        node = node->left;
+    return node->data;
 }
 
 template <class ItemType> void RedBlackTree<ItemType>::clear() {
